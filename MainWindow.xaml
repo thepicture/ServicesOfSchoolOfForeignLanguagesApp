@@ -1,0 +1,218 @@
+﻿<Window x:Class="ServicesOfSchoolOfForeignLanguagesApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ServicesOfSchoolOfForeignLanguagesApp"
+        mc:Ignorable="d"
+        Title="Услуги школ иностранных языков - Режим клиента"
+        Height="450"
+        Width="800"
+        MinHeight="450"
+        MinWidth="800"
+        Icon="Resources/school_logo.ico"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="282*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <Menu>
+            <MenuItem Header="Ввести код"
+                      Name="EnterCodeItem"
+                      Margin="5"
+                      FontFamily="Comic Sans MS"
+                      Click="EnterCodeItem_Click">
+            </MenuItem>
+        </Menu>
+
+        <Grid Grid.Row="1"
+              Background="#FFE7FABF">
+
+            <TextBlock Text="Список услуг"
+                       Style="{StaticResource CommonBlock}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="25"
+                       FontWeight="Bold"></TextBlock>
+
+            <Button HorizontalAlignment="Right"
+                    Content="Выход"
+                    Name="BtnExit"
+                    Click="BtnExit_Click"
+                    ></Button>
+
+            <Image HorizontalAlignment="Left"
+                   Margin="5"
+                   Source="Resources/school_logo.png"></Image>
+
+        </Grid>
+
+        <!--Search, sort and filter view.-->
+        <Grid Grid.Row="2"
+              Name="ToolBoxGrid">
+            <WrapPanel Orientation="Horizontal">
+                <TextBlock Style="{StaticResource CommonBlock}"
+                           Text="Сортировать по"></TextBlock>
+                <ComboBox Name="ComboSort"
+                          SelectionChanged="ComboSort_SelectionChanged"
+                          Width="150"></ComboBox>
+                <TextBlock Style="{StaticResource CommonBlock}"
+                           Text="Фильтровать по"></TextBlock>
+                <ComboBox Name="ComboFilter"
+                          SelectionChanged="ComboFilter_SelectionChanged"
+                          Width="150"></ComboBox>
+                <TextBlock Style="{StaticResource CommonBlock}"
+                           Text="Искать по"></TextBlock>
+                <TextBox Name="SearchBox"
+                         TextChanged="SearchBox_TextChanged"
+                         HorizontalAlignment="Right"
+                         Width="150"></TextBox>
+            </WrapPanel>
+        </Grid>
+
+        <Image Grid.Row="3"
+               Name="RotatingLogo"
+               Source="Resources/school_logo.png"
+               Opacity=".1"
+               RenderTransformOrigin=".5,.5"
+               Panel.ZIndex="-1">
+            <Image.RenderTransform>
+                <RotateTransform x:Name="Rotate"></RotateTransform>
+            </Image.RenderTransform>
+            <Image.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation From="0"
+                                             To="360"
+                                             Duration="0:1:0"
+                                             RepeatBehavior="Forever"
+                                             Storyboard.TargetProperty="(Image.RenderTransform).(RotateTransform.Angle)"
+                                             ></DoubleAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Image.Triggers>
+        </Image>
+
+        <!--The list of services view.-->
+        <ListView Grid.Row="3"
+                  Background="Transparent"
+                  Name="ServiceView"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ScrollViewer.CanContentScroll="False">
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+
+                    <Grid Margin="5"
+                          Width="{Binding ActualWidth, ElementName=ServiceView}"
+                          Background="{Binding GetColor}"
+                          HorizontalAlignment="Left">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0">
+                            <Image Stretch="UniformToFill"
+                                   Width="100"
+                                   Height="100"
+                                   HorizontalAlignment="Left">
+                                <Image.Source>
+                                    <Binding Path="MainImage">
+                                        <Binding.TargetNullValue>
+                                            <ImageSource>Resources/school_logo.png</ImageSource>
+                                        </Binding.TargetNullValue>
+                                    </Binding>
+                                </Image.Source>
+                            </Image>
+                        </Grid>
+
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="{Binding Title}"
+                                   Grid.Row="0"
+                                   Style="{StaticResource CommonBlock}"
+                                   FontSize="15"></TextBlock>
+
+                            <StackPanel Orientation="Horizontal"
+                                        Grid.Row="1">
+
+                                <TextBlock Text="{Binding GetOnlyCost}"
+                                   Visibility="{Binding GetCostTrigger}"
+                                   Style="{StaticResource CommonBlock}"
+                                   TextDecorations="Strikethrough"
+                                   FontSize="15"></TextBlock>
+
+                                <TextBlock Text="{Binding GetCost}"
+                                   Style="{StaticResource CommonBlock}"
+                                   FontSize="15"></TextBlock>
+
+                            </StackPanel>
+                            <TextBlock Text="{Binding GetDiscount}"
+                                   Grid.Row="2"
+                                   Style="{StaticResource CommonBlock}"></TextBlock>
+
+
+                            <Grid Name="ServiceButtonsGrid"
+                                Visibility="{Binding AdminTest}"
+                                Grid.Row="3">
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="редактировать"
+                                        Name="BtnEditService"
+                                        Click="BtnEditService_Click"></Button>
+                                    <Button Content="удалить"
+                                        Name="BtnDeleteService"
+                                        Click="BtnDeleteService_Click"></Button>
+                                </StackPanel>
+                            </Grid>
+
+
+                        </Grid>
+
+                    </Grid>
+
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </ListView>
+
+        <TextBlock Grid.Row="4"
+                   Name="CountBox"
+                   Style="{StaticResource CommonBlock}"
+                   HorizontalAlignment="Left"></TextBlock>
+
+        <Grid Grid.Row="5"
+              Background="#FFE7FABF">
+
+            <Grid Name="VisibilityGrid"
+                  Visibility="Hidden">
+
+                <Button Content="Добавить услугу"
+                    HorizontalAlignment="Left"
+                    Name="BtnAddService"
+                        Click="BtnAddService_Click"></Button>
+
+                <Button Content="Записать клиента на услугу"
+                    HorizontalAlignment="Right"
+                    Name="BtnAddClient"></Button>
+
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+</Window>
